@@ -1,0 +1,17 @@
+
+AIN:ON:1 -> A
+AIN:OFF:-1 -> A
+
+BIN:ON:1 -> B
+BIN:OFF:-1 -> B
+
+B:ON:1 -> C
+C:ON:-2 -> C
+B:ON:-1 -> D
+A:ON:1 -> D
+
+C,D:ON,ON:1 -> DNADamage
+C:OFF:-1 -> DNADamage
+
+DNADamage:ON:1 -> Apoptosis
+

@@ -1,0 +1,170 @@
+TNF:ON:1 -> TNFR1
+TNF:OFF:-1 -> TNFR1
+
+TNFR1:ON:1  -> TRADD
+TNFR1:OFF:-1 -> TRADD
+
+TRADD:ON:1 -> TRAF
+TRADD:OFF:-1 -> TRAF
+
+TRADD:ON:1 -> FADD
+TRADD:OFF:-1 -> FADD
+
+TRADD:ON:1 -> RIP
+TRADD:OFF:-1 -> RIP
+
+TRAF:ON:1 -> cFLIP
+TRAF:OFF:-1 -> cFLIP
+
+FADD:ON:1 -> Cas8
+Cas6:ON:1 -> Cas8
+cFLIP:ON:-1 -> Cas8
+FADD,Cas6:OFF,OFF:-1 -> Cas8
+
+TNF:ON:1 -> TNFR2
+TNF:OFF:-1 -> TNFR2
+
+RIP:ON:1 -> TRAF2
+TNFR2:ON:-2 -> TRAF2
+RIP:OFF:-1 -> TRAF2
+
+TRAF2:ON:1 -> NIK
+TRAF2:OFF:-1 -> NIK
+
+NIK:ON:1 -> IKK
+Akt:ON:1 -> IKK
+A20:ON:-3 -> IKK
+// next old
+// NIK,Akt:OFF,OFF:-1 -> IKK
+// next new
+IKK:ON:-1 -> IKK
+
+NFkB:ON:1 -> IkB
+IKK:ON:-2 -> IkB
+
+IkB:OFF:1 -> NFkB
+IkB:ON:-1 -> NFkB
+
+NFkB:ON:1 -> A20
+NFkB:OFF:-1 -> A20
+
+TRAF:ON:1 -> MEKK1
+TRAF:OFF:-1 -> MEKK1
+
+MEKK1:ON:1 -> JNKK
+MEKK1:OFF:-1 -> JNKK
+Akt:ON:-2 -> JNKK
+
+JNKK:ON:1 -> JNK
+JNKK:OFF:-1 -> JNK
+
+Cas8:ON:1 -> Cas7
+APC:ON:1 -> Cas7
+IAP:ON:-3 -> Cas7
+// next old
+// Cas8,APC:OFF,OFF:-1 -> Cas7
+// next new
+Cas7:ON:-1 -> Cas7
+
+Cas7:ON:1 -> Cas12
+Cas7:OFF:-1 -> Cas12
+
+Cas12:ON:1 -> Cas9
+Cas3:ON:1 -> Cas9
+Akt:ON:-1 -> Cas9
+// next 1 old
+// Cas12:OFF:-1 -> Cas9
+// next 1 new
+Cas12,Cas3:OFF,OFF:-1 -> Cas9
+// next 1 old
+// IAP:ON:-2 -> Cas9
+// next 1 new
+IAP:ON:-3 -> Cas9
+
+Cas9,Apaf1,Mito:ON,ON,ON:1 -> APC
+IAP:ON:-2 -> APC
+// next 3 old
+// Cas9:OFF:-1 -> APC
+// Apaf1:OFF:-1 -> APC
+// Mito:OFF:-1 -> APC
+// next new
+APC:ON:-1 -> APC
+
+Cas8:ON:1 -> Cas3
+APC:ON:1 -> Cas3
+Cas6:ON:1 -> Cas3
+// next 1 old
+// IAP:ON:-4 -> Cas3
+// next 1 new (weight of -5 vs -4)
+IAP:ON:-5 -> Cas3
+// next 1 old
+// Cas8,APC,Cas6:OFF,OFF,OFF:-1 -> Cas3
+// next 1 new
+Cas3:ON:-1 -> Cas3
+
+Cas3:ON:1 -> Cas6
+IAP:ON:-2 -> Cas6
+Cas3:OFF:-1 -> Cas6
+
+p53,JNK:ON,ON:1 -> BID
+p53,Cas8:ON,ON:1 -> BID
+BcIX:ON:-3 -> BID
+p53:OFF:-1 -> BID
+
+NFkB:ON:1 -> BcIX
+p53:ON:-1 -> BcIX
+BAD:ON:-2 -> BcIX
+NFkB:OFF:-1 -> BcIX
+
+p53:ON:1 -> BAD
+Akt:ON:-2 -> BAD
+p53:OFF:-1 -> BAD
+
+JNK:ON:1 -> p53
+DNADamage:ON:3 -> p53
+Mdm2:ON:-2 -> p53
+// next 1 old
+// JNK,DNADamage:OFF,OFF:-1 -> p53
+// next 1 new
+p53:ON:-1 -> p53
+
+p53:ON:1 -> Apaf1
+p53:OFF:-1 -> Apaf1
+
+p53:ON:1 -> PTEN
+p53:OFF:-1 -> PTEN
+
+BID:ON:1 -> Mito
+BcIX:ON:-1 -> Mito
+
+NFkB:ON:1 -> IAP
+Mito:ON:-1 -> IAP
+Cas3,Cas6:ON,ON:-1 -> IAP
+
+GF:ON:1 -> GFR
+GF:OFF:-1 -> GFR
+
+GFR:ON:1 -> PI3K
+GFR:OFF:-1 -> PI3K
+
+GFR:ON:1 -> PIP2
+GFR:OFF:-1 -> PIP2
+
+PI3K,PIP2:ON,ON:1 -> PIP3
+PIP2:OFF:-1 -> PIP3
+PTEN:ON:-2 -> PIP3
+
+PIP3:ON:1 -> Akt
+PIP3:OFF:-1 -> Akt
+
+Akt:ON:1 -> Mdm2
+p53:ON:1 -> Mdm2
+// next 1 old
+// Akt:OFF:-1 -> Mdm2
+// next 1 new
+Mdm2:ON:-1 -> Mdm2
+
+Cas3:ON:1 -> DNADamage
+// DNADamage:ON:-1 -> DNADamage
+
+DNADamage:ON:1 -> Apoptosis

@@ -1,0 +1,41 @@
+GF input
+TNF input
+TNFR1
+TRADD
+TRAF
+FADD
+RIP
+cFLIP
+Cas8
+TNFR2
+TRAF2
+NIK
+IKK
+IkB
+NFkB
+A20
+MEKK1
+JNKK
+JNK
+Cas7
+Cas12
+Cas9
+APC
+Cas3
+Cas6
+BID
+BcIX
+BAD
+p53
+Apaf1
+PTEN
+Mito
+IAP
+GFR
+PI3K
+PIP2
+PIP3
+Akt
+Mdm2
+DNADamage 2
+Apoptosis 20
