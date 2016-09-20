@@ -374,7 +374,7 @@ INITIAL {
 }
 
 : strvalid - return the index to be used for get/setnodevals
-PROCEDURE strvalid () {
+FUNCTION strvalid () {
   VERBATIM
   char *pname;
   static char *pnames[6] = {"state", "count", "knockout", "start", "sthresh", "scount"};
@@ -394,7 +394,7 @@ PROCEDURE getscount () {
   double *ps; int i; void *vs;
   if(!ifarg(1)) {
     printf("BNET.getscount(vec) - returns scount of each node in vec\n");
-    return;
+    return 0; 
   }
   vs = vector_arg(1);
   ps = vector_newsize(vs,BP->numnodes);
@@ -427,7 +427,7 @@ PROCEDURE getsthresh () {
   double *ps; int i; void *vs;
   if(!ifarg(1)) {
     printf("BNET.getsthresh(vec) - returns sthresh of each node in vec\n");
-    return;
+    return 0;
   }
   vs = vector_arg(1);
   ps = vector_newsize(vs,BP->numnodes);
@@ -460,7 +460,7 @@ PROCEDURE getcount () {
   double *ps; int i; void *vs;
   if(!ifarg(1)) {
     printf("BNET.getcount(vec) - returns count of each node in vec\n");
-    return;
+    return 0;
   }
   vs = vector_arg(1);
   ps = vector_newsize(vs,BP->numnodes);
@@ -493,7 +493,7 @@ PROCEDURE getstate () {
   double *ps; int i; void *vs;
   if(!ifarg(1)) {
     printf("BNET.getstate(vec) - returns state of each node in vec\n");
-    return;
+    return 0;
   }
   vs = vector_arg(1);
   ps = vector_newsize(vs,BP->numnodes);
@@ -526,7 +526,7 @@ PROCEDURE getstart () {
   double *ps; int i; void *vs;
   if(!ifarg(1)) {
     printf("BNET.getstart(vec) - returns start state of each node in vec\n");
-    return;
+    return 0;
   }
   vs = vector_arg(1);
   ps = vector_newsize(vs,BP->numnodes);
@@ -577,7 +577,7 @@ PROCEDURE getknockout () {
   double *pk; int i; void *vk;
   if(!ifarg(1)) {
     printf("BNET.getknockout(vec) - returns knockout flag of each node in vec\n");
-    return;
+    return 0;
   }
   vk = vector_arg(1);
   pk = vector_newsize(vk,BP->numnodes);
