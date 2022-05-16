@@ -62,7 +62,7 @@ typedef double      sf8;    /* eight byte signed floating point number */
 extern double ERR,GET,SET,OK,NOP,ALL,NEG,POS,CHK,NOZ,GTH,GTE,LTH,LTE,EQU;
 extern double EQV,EQW,EQX,NEQ,SEQ,RXP,IBE,EBI,IBI,EBE;
 
-extern double *vector_newsize();
+extern double *vector_newsize(void* v, int n);
 extern unsigned int  dcrsz;
 extern double       *dcr;
 extern double       *dcrset(int);

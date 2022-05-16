@@ -105,21 +105,21 @@ brule* addrule (boonet* pnet, double* psrc, int targid, double weight, double* p
   int idx,i;
   if(pnet->prules == 0x0) { // take care of memory allocation
     pnet->rulebufsz = 16;
-    pnet->prules = calloc(pnet->rulebufsz, sizeof(brule) );
+    pnet->prules = (struct BRULE*) calloc(pnet->rulebufsz, sizeof(brule) );
     pnet->nrules = 0;
   } else if(pnet->nrules >= pnet->rulebufsz) {
     pnet->rulebufsz *= 2;
-    pnet->prules = realloc(pnet->prules, pnet->rulebufsz * sizeof(brule) );
+    pnet->prules = (struct BRULE*) realloc(pnet->prules, pnet->rulebufsz * sizeof(brule) );
   }
   idx = pnet->nrules;
   pnet->prules[idx].nsrc = nsrc;           // set # of sources
   pnet->prules[idx].ptarg = &pnet->pnodes[targid]; // set target
   pnet->prules[idx].weight = weight;               // set weight
   // set the sources
-  pnet->prules[idx].psrc = calloc(nsrc, sizeof(bnode*));
+  pnet->prules[idx].psrc = (struct BNODE **) calloc(nsrc, sizeof(bnode*));
   for(i=0;i<nsrc;i++) pnet->prules[idx].psrc[i] = &pnet->pnodes[(int)psrc[i]];
   // set source state for rule to be 'on'
-  pnet->prules[idx].psrcstate = calloc(nsrc, sizeof(int));
+  pnet->prules[idx].psrcstate = (int *) calloc(nsrc, sizeof(int));
   for(i=0;i<nsrc;i++) pnet->prules[idx].psrcstate[i] = (int) psrcstate[i]; 
   return &pnet->prules[ pnet->nrules++ ]; // return the new rule and inc # rules
 }
@@ -193,7 +193,7 @@ CONSTRUCTOR {
     printf("BNET err0: must have a network with positive # of nodes!\n");
     hxe();
   }
-  _p_sop = (void*) makeboonet(sz);
+  _p_sop = (double*) makeboonet(sz);
   pnet = BP;
   pnet->id = ifarg(2) ? (int) *getarg(2) : 0;
   ENDVERBATIM
@@ -267,7 +267,7 @@ PROCEDURE pr () {
       if(prule->psrc[j]->name) {
         sprintf(stmp,"%s%s%s ", j>0?"AND ":"", prule->psrcstate[j]?"":"!", prule->psrc[j]->name);
       } else {
-        sprintf(stmp,"%s%s%s ", j>0?"AND ":"", prule->psrcstate[j]?"":"!", prule->psrc[j]->id);
+        sprintf(stmp,"%s%s%d ", j>0?"AND ":"", prule->psrcstate[j]?"":"!", prule->psrc[j]->id);
       }
       strcat(srcstr,stmp);
     }
@@ -288,13 +288,12 @@ FUNCTION graphviz () {
   int i, j, k, LR, fsz, w, h;
   bnode* pnodes = BP->pnodes;
   brule* prule;
-  char *ncolor, *fcolor, *arrowtype, *lstyle, *shape;//node color, font color, arrow type, line style, node shape
-  char buf[4096], *dotname, *fname, *ext, fontsize[128];
+  char buf[4096], *dotname, *fname, fontsize[128];
   double penw; // penwidth
   FILE* fp = 0x0;
   dotname = ifarg(1) ? gargstr(1) : 0x0;
   fname = ifarg(2) ? gargstr(2) : 0x0;
-  ext =   ifarg(3) ? gargstr(3) : "gif";
+  const char* ext =   ifarg(3) ? gargstr(3) : "gif";
   LR = ifarg(4) ? (int) *getarg(4) : 1;
   w = ifarg(5) ? (int) *getarg(5) : -1;
   h = ifarg(6) ? (int) *getarg(6) : -1;
@@ -308,9 +307,9 @@ FUNCTION graphviz () {
   if(LR){sprintf(buf, "%s", "\trankdir=LR;\n"); if(fp) fprintf(fp,"%s",buf); else fprintf(stdout,"%s",buf); }
   if(w>0 && h>0) {sprintf(buf, "size=\"%d,%d\"\n",w,h); if(fp) fprintf(fp,"%s",buf); else fprintf(stdout,"%s",buf);}
   for(i=0;i<BP->numnodes;i++) {
-    ncolor = BP->pnodes[i].knockout ? "white" : BP->pnodes[i].state > 0 ? "black" : "gray";
-    fcolor = BP->pnodes[i].knockout ? "black" : "white";
-    shape = pnodes[i].sthresh > 0 ? "invtriangle" : "doublecircle";
+    const char* ncolor = BP->pnodes[i].knockout ? "white" : BP->pnodes[i].state > 0 ? "black" : "gray";
+    const char* fcolor = BP->pnodes[i].knockout ? "black" : "white";
+    const char* shape = pnodes[i].sthresh > 0 ? "invtriangle" : "doublecircle";
     if(BP->pnodes[i].name) {
       sprintf(buf,"\t%s [fontcolor=%s,%sstyle=filled,shape=%s,fillcolor=%s,color=%s]\n",
               BP->pnodes[i].name,fcolor,fontsize,shape,ncolor,ncolor);
@@ -324,8 +323,8 @@ FUNCTION graphviz () {
     prule = &BP->prules[i];
     for(j=0;j<prule->nsrc;j++) {
       penw = prule->psrcstate[j] == prule->psrc[j]->state ? 6.0 : 1.0;
-      arrowtype = prule->weight < 0 ? "tee" : "open";
-      lstyle = prule->psrcstate[j] == 0 ? ",style=dashed" : " ";
+      const char* arrowtype = prule->weight < 0 ? "tee" : "open";
+      const char* lstyle = prule->psrcstate[j] == 0 ? ",style=dashed" : " ";
       if(prule->psrc[j]->name) {
         if(prule->ptarg->name) {
           sprintf(buf,"\t%s -> %s [arrowhead=%s,penwidth=%g,color=%s%s]\n",
@@ -613,7 +612,6 @@ FUNCTION setnname () {
 FUNCTION getnname () {
   VERBATIM
   int i, id, sz; char **pname, string[BUFSIZ];
-  char** hoc_pgargstr();
   id = (int) *getarg(1);
   if(id < 0 || id >= BP->numnodes) {
     printf("BNET.getnname ERR0: invalid node index %d\n",id);
