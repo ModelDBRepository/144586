@@ -150,7 +150,7 @@ static double ident (void* vv) {
   int nx,bsz; double* x;
   nx = vector_instance_px(vv, &x);
   bsz=vector_buffer_size((IvocVect*)vv);
-  printf("Obj*%x Dbl*%x Size: %d Bufsize: %d\n",vv,x,nx,bsz);
+  printf("Obj*%p Dbl*%p Size: %d Bufsize: %d\n",vv,x,nx,bsz);
   return (double)nx;
 }
 ENDVERBATIM
@@ -1881,7 +1881,7 @@ static double fetch (void* vv) {
     ny = vector_arg_px(3, &y);
     if (ny>pL->isz) vector_resize((IvocVect*)vector_arg(3),pL->isz); // don't make bigger if only want a few
     for (i=0,j=0,cnt=0;i<pL->isz && j<ny;i++,j++) {
-      if (ix>pL->plen[i]) {printf("vecst:fetch()ERRB: %d %d %x\n",i,ix,pL->pv[i]); 
+      if (ix>pL->plen[i]) {printf("vecst:fetch()ERRB: %d %d %p\n",i,ix,pL->pv[i]); 
         FreeListVec(&pL); hxe();}
       y[j]=pL->pv[i][ix];
       cnt++;
@@ -1890,7 +1890,7 @@ static double fetch (void* vv) {
   } else {
     for (i=0,j=3,cnt=0;i<pL->isz && ifarg(j);i++,j++) {
       if (hoc_is_double_arg(j)) continue; // skip this one
-      if (ix>pL->plen[i]) {printf("vecst:fetch()ERRB1: %d %d %x\n",i,ix,pL->pv[i]); 
+      if (ix>pL->plen[i]) {printf("vecst:fetch()ERRB1: %d %d %p\n",i,ix,pL->pv[i]); 
         FreeListVec(&pL); hxe();}
       *hoc_pgetarg(j)=ret=pL->pv[i][ix];
       cnt++;      
@@ -2741,7 +2741,7 @@ static double rdfile (void* vv) {
   if (strncmp(hoc_object_name(ob),"Vector",6)==0) vflag=1;
 
   fseek(f,0,SEEK_END); sz=(int)ftell(f); rewind(f); // get size
-  if (DEBUG_VECST) printf("Size %d\n",sz);
+  if (DEBUG_VECST) printf("Size %ld\n",sz);
   if (sz>scrsz*sizeof(int)) { 
     if (scrsz>0) { free(scr); scr=(unsigned int *)NULL; }
     scr=(unsigned int *)ecalloc(1, sz);

@@ -80,7 +80,6 @@ extern FILE* hoc_obj_file_arg(int narg);
 extern Object** hoc_objgetarg();
 char *gargstr();
 char** hoc_pgargstr();
-extern void vector_resize();
 extern int vector_instance_px();
 extern void* vector_arg();
 extern double* vector_vec();
@@ -94,7 +93,6 @@ extern double mcell_ran4(u_int32_t *idx1, double *x, unsigned int n, double rang
 extern int nrn_mlh_gsort();
 extern int ivoc_list_count(Object*);
 extern Object* ivoc_list_item(Object*, int);
-extern int list_vector_px2();
 extern int hoc_is_double_arg(int narg);
 extern int hoc_is_str_arg(int narg);
 extern int hoc_is_object_arg(int narg);
@@ -103,11 +101,15 @@ extern Symbol *hoc_get_symbol(char *);
 extern Symbol *hoc_lookup(const char*);
 extern Point_process* ob2pntproc(Object*);
 
+int uniq2(int, double*, double*, double*);
 extern char* hoc_object_name(Object*);
-extern int cmpdfn();
+extern int cmpdfn(double, double);
 extern int openvec(int, double **);
-int list_vector_px();
-double *list_vector_resize();
+int list_vector_px(Object*, int, double**);
+int list_vector_px2(Object *, int, double**, IvocVect**);
+int list_vector_px3(Object*, int, double**, IvocVect**);
+int list_vector_px4(Object*, int, double**, int);
+double *list_vector_resize(Object *ob, int i, int sz);
 static void hxe() { hoc_execerror("",0); }
 extern void FreeListVec(ListVec** pp);
 extern ListVec* AllocListVec(Object* p);
@@ -117,6 +119,7 @@ void ListVecResize(ListVec* p,int newsz);
 extern short *nrn_artcell_qindex_;
 extern double nrn_event_queue_stats(double*);
 extern void clear_event_queue();
+int IsList(Object*);
 
 static double sc[6];
 static FILE*  testout;

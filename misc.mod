@@ -58,7 +58,7 @@ VERBATIM
        errno else will get a nrnoc error.  Seems to be a problem even
        if I don't include <errno.h> */
 
-    char *gargstr(), *filename;
+    char *gargstr(int), *filename;
 
     filename = gargstr(1);
 
@@ -85,7 +85,7 @@ FUNCTION sassign() {
 VERBATIM
     FILE *pipein;
     char string[BUFSIZ], **strname, *syscall;
-    char** hoc_pgargstr();
+    char** hoc_pgargstr(int);
 
     strname = hoc_pgargstr(1);
     syscall = gargstr(2);
@@ -197,7 +197,7 @@ VERBATIM
   size_t x,y;
   x=(size_t)_lsz;
   pmlc=(char *)malloc(x);
-  printf("Did %ld: %x\n",x,pmlc);
+  printf("Did %ld: %p\n",x,pmlc);
   y=(unsigned int)_lsz-1;
   pmlc[y]=(char)97;
   printf("WRITE/READ 'a': "); 
@@ -217,7 +217,7 @@ ENDVERBATIM
 FUNCTION hocgetc() {
 VERBATIM
 {	
-  FILE* f, *hoc_obj_file_arg();
+  FILE* f, *hoc_obj_file_arg(int);
   f = hoc_obj_file_arg(1);
   _lhocgetc = (double)getc(f);
 }

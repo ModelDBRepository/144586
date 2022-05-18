@@ -50,7 +50,7 @@ union dblint {
 static u_int32_t ilow=0;  
 static u_int32_t ihigh=0; // same as ihigh in (/usr/site/nrniv/nrn/src/ivoc/ivocrand.cpp:75)
 static double *x1x, *y1y, *z1z;
-static void vprpr();
+static void vprpr(double, int);
 
 static int compare_ul(const void* l1, const void* l2) {
   int retval;
@@ -426,9 +426,9 @@ static double* getrank (int n, double mdata[])
 { int i;
   double* rank;
   int* index;
-  rank = malloc(n*sizeof(double));
+  rank = (double*)malloc(n*sizeof(double));
   if (!rank) return NULL;
-  index = malloc(n*sizeof(int));
+  index = (int*)malloc(n*sizeof(int));
   if (!index)
   { free(rank);
     return NULL;
@@ -470,9 +470,9 @@ static double spearman(int n, double* data1, double* data2)
   double avgrank;
   double* tdata1;
   double* tdata2;
-  tdata1 = malloc(n*sizeof(double));
+  tdata1 = (double*)malloc(n*sizeof(double));
   if(!tdata1) return 0.0; /* Memory allocation error */
-  tdata2 = malloc(n*sizeof(double));
+  tdata2 = (double*)malloc(n*sizeof(double));
   if(!tdata2) /* Memory allocation error */
   { free(tdata1);
     return 0.0;
@@ -643,7 +643,7 @@ int qsort2 (double *p1in, double* p2in, int n,double* p1out,double* p2out) {
   int i;
   scr=scrset(n);
   for (i=0;i<n;i++) scr[i]=i;
-  nrn_mlh_gsort(p1in, scr, n, cmpdfn);
+  nrn_mlh_gsort(p1in, (int*)scr, n, cmpdfn);
   for (i=0;i<n;i++) {
     p1out[i]=p1in[scr[i]];
     p2out[i]=p2in[scr[i]];
@@ -861,8 +861,8 @@ static double hash (void* vv) {
       } else   {  xx.d=vvo[j][i]; }
       if (xx.i[0]==0) { xx.i[0]=xx.i[1]; xx.i[0]<<=4; } // high order bits may be 0
       if (xx.i[1]==0) { xx.i[1]=xx.i[0]; xx.i[1]<<=4; } // low order bits unlikely 0
-      mcell_ran4_init(&xx.i[1]);
-      mcell_ran4(&xx.i[0], &y, 1, big); // generate a pseudorand number based on these
+      mcell_ran4_init(xx.i[1]);
+      mcell_ran4((u_int32_t*)&xx.i[0], &y, 1, big); // generate a pseudorand number based on these
       prod*=y;  // keep multiplying these out
     }
     if (! vfl) x[i]=prod; else return prod; // just return the 1 value
@@ -1043,7 +1043,7 @@ static double setrnd (void* vv) {
       scrset(nex);
       x1x = (double *)realloc(x1x,sizeof(double)*nx*4);
       for (i=0;i<nex;i++) scr[i]=i;
-      nrn_mlh_gsort(ex, scr, nex, cmpdfn);
+      nrn_mlh_gsort(ex, (int*)scr, nex, cmpdfn);
       for (i=0;i<nex;i++) x1x[i]=ex[scr[i]];
       for (i=0;i<nex;i++) ex[i]=x1x[i];
     }
@@ -1289,7 +1289,7 @@ VERBATIM
 static double comb (void* vv) {
   double* x;
   int nn,kk,cc,sz,i;
-  sz=vector_instance_px(vv,&x);
+  sz=vector_instance_px((IvocVect*)vv,&x);
   nn=(int)*getarg(1);
   kk=(int)*getarg(2);
   cc=(int)*getarg(3);
@@ -1299,7 +1299,7 @@ static double comb (void* vv) {
   }
   memset(x,0,sizeof(double)*kk);
   synccv(nn,kk,cc,x);
-  vector_resize(vv,kk);
+  vector_resize((IvocVect*)vv,kk);
   return 1.0;
 }
 ENDVERBATIM
@@ -1349,15 +1349,15 @@ static double rsampsig(void* vv){
   int n0,n1,na,nn,kk,cc,i,j,*pm,szthis,onesided,nocmbchk,bti,*pids;
   unsigned long nruncombs,nallcombs,*pcombids;
   double *g0,*g1,*ga,prc,*g0t,*g1t,dmobs,dm0,dm1,*phso,nmatch,*pthis,dret;
-  void* vhso; //vector * for changing size at end
   Symbol* pHocVecFunc,*pHocCompFunc; //hoc function pointers
   dret=-1.0;
   g0t=g1t=NULL; pm=pids=NULL; pcombids=NULL;//init arrays to null
-  szthis=vector_instance_px(vv, &pthis); //size of calling vector
+  szthis=vector_instance_px((IvocVect*)vv, &pthis); //size of calling vector
   n0=vector_arg_px(1,&g0);//group 0 size
   n1=vector_arg_px(2,&g1);//group 1 size
   na=n0+n1;//total # of elements
   prc=*getarg(3);//% of combinations to try, or total # of combinations to try iff > 1.0
+  IvocVect* vhso;
   if(!(pHocVecFunc=hoc_lookup(gargstr(4)))){
     printf("rsampsig ERRA: couldn't find hoc vec func %s\n",gargstr(4));
     goto CLEANRSAMPSIG;
@@ -1416,7 +1416,7 @@ static double rsampsig(void* vv){
     hoc_pushx(dm0); hoc_pushx(dm1); hoc_call_func(pHocCompFunc,2); //call comparison function
     pthis[i]=onesided?hretval:fabs(hretval); //save value from comparison function
   }
-  vector_resize(vv,nruncombs);//resize calling vec
+  vector_resize((IvocVect*)vv,nruncombs);//resize calling vec
   //get comparison function value for original data groups
   vector_resize(vhso,n0); memcpy(phso,g0,sizeof(double)*n0); 
   hoc_call_func(pHocVecFunc,0); dm0 = hretval; //get measure on original group 0
@@ -1648,7 +1648,7 @@ static double vpr2 (void* vv) {
     } else { fl2=0;
       vprpr(y[i],base);
       colc++;
-      if (colc>(int)newline){printf("\n    ",colc); colc=0;}
+      if (colc>(int)newline){printf("\n    "); colc=0;}
     }
   }
   printf("\n");
@@ -1660,10 +1660,11 @@ static double vpr2 (void* vv) {
         if (fl2) {printf(" %2d ",n); colc+=3;} else {printf(" "); colc++;}
         n=fl2=0; 
       }
-      if (colc>(int)newline){printf("\n    ",colc); colc=0;}
+      if (colc>(int)newline){printf("\n    "); colc=0;}
     }
     printf("\n");
   }
+  return 0.;
 }
 
 static void vprpr (double x, int base) {
@@ -1693,7 +1694,7 @@ static double bin (void* vv) {
   int i, j, nx, maxsz, lfl;
   double* x, *y, *ix, invl, min, max, maxf, jj;
   Object* ob;
-  void* voi[2];
+  IvocVect* voi[2];
 
   min=0; max=1e9; maxf=-1e9;
   nx = vector_instance_px(vv, &x);
@@ -1742,7 +1743,7 @@ static double ihist (void* vv) {
   i = vector_arg_px(1, &tv); // vector of times
   if (i!=nx) {printf("vecst:ihist()ERR0: diff size %d %d\n",nx,i); hxe();}
   if (!flag && !ismono1(tv,nx,1)){
-    printf("vecst:ihist()ERR0A: set flag_stats for non-monotonic time vec\n",nx,i); hxe();}
+    printf("vecst:ihist()ERR0A: set flag_stats for non-monotonic time vec\n"); hxe();}
   pL = AllocListVec(obl=*hoc_objgetarg(2));
   min=*getarg(3); max=*getarg(4); binsz=*getarg(5); 
   if (binsz<=0) {printf("stats:ihist()ERR0B: binsz must be >0 (%g)\n",binsz); hxe();}
@@ -1783,8 +1784,8 @@ static double irate (void* vv) {
   unsigned int i, j, n, nx;
   double *prate,*phist,binsz,t1,t2;
   nx = vector_arg_px(1, &phist);
-  vector_resize(vv,nx);
-  vector_instance_px(vv, &prate);
+  vector_resize((IvocVect*)vv,nx);
+  vector_instance_px((IvocVect*)vv, &prate);
   binsz = *getarg(2);
   for(i=0;i<nx;i++) {
     prate[i]=0.;
@@ -1876,7 +1877,8 @@ FUNCTION mktscor () {
 VERBATIM
   double dret,*ptmp,**cF,**Y,**X,**cFT,r;
   ListVec *pTS;
-  int i,j,k,nrows,ncols,nrcf;
+  int i,j,k,nrows,nrcf;
+  size_t ncols;
   dret=0.0;
   pTS=0x0; ptmp=0x0; cF=cFT=0x0; X=Y=0x0;
   r = *getarg(1);
@@ -1951,7 +1953,7 @@ VERBATIM
   install_vector_method("comb", comb);
   install_vector_method("combid", combid);
   install_vector_method("rsampsig",rsampsig);
-  install_vector_method("irate",irate);
+  install_vector_method("irate",(double(*)(void*))irate);
   install_vector_method("cumsum",cumsum);
   install_vector_method("lvar",lvar);
 ENDVERBATIM
@@ -2044,8 +2046,8 @@ unsigned int hashseed2 (int na, double* x) {
     if (xx.i[0]==0) { xx.i[0]=xx.i[1]; xx.i[0]<<=4; } // high order bits may be 0
     if (xx.i[1]==0) { xx.i[1]=xx.i[0]; xx.i[1]<<=4; } // low order bits unlikely 0
     xx.i[0]+=(i+1); xx.i[1]+=(i+1); // so different for different order args
-    mcell_ran4_init(&xx.i[1]);
-    mcell_ran4(&xx.i[0], &y, 1, big); // generate a pseudorand number based on these
+    mcell_ran4_init(xx.i[1]);
+    mcell_ran4((u_int32_t*)&xx.i[0], &y, 1, big); // generate a pseudorand number based on these
     while (y>UINT_MAX) y/=1e9; // UINT_MAX is 4.294967e+09
     ihigh*=(unsigned int)y;  // keep multiplying these out
   }
@@ -2148,7 +2150,6 @@ FUNCTION gammln (xx) {
 FUNCTION betai(a,b,x) {
 VERBATIM {
   double bt;
-  double gammln(),betacf();
 
   if (_lx < 0.0 || _lx > 1.0) {printf("Bad x in routine BETAI\n"); hxe();}
   if (_lx == 0.0 || _lx == 1.0) bt=0.0;
@@ -2222,7 +2223,6 @@ FUNCTION tstat() {
 
 FUNCTION tdistrib() {
   VERBATIM
-  double gammln();
   double x = *getarg(1);
   double dof = *getarg(2);
   double res = (gammln( (dof+1.0) / 2.0 )  / gammln( dof / 2.0 ) );
