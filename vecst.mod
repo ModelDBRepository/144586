@@ -2445,7 +2445,7 @@ int openvec (int arg, double **y) {
 }
 
 // vector_newsize() will also increase size of vector
-double *vector_newsize (IvocVect* vv, int n) {
+double *vector_newsize(void* vv, int n) {
   vector_resize(vv,n);
   return vector_vec(vv);
 }
