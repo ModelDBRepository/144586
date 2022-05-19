@@ -100,10 +100,10 @@ extern int hoc_is_pdouble_arg(int narg);
 extern Symbol *hoc_get_symbol(char *);
 extern Symbol *hoc_lookup(const char*);
 extern Point_process* ob2pntproc(Object*);
+extern char* hoc_object_name(Object*);
 #endif
 extern void dshuffle(double* x,int nx);
 int uniq2(int, double*, double*, double*);
-extern char* hoc_object_name(Object*);
 extern int cmpdfn(double, double);
 extern int openvec(int, double **);
 int list_vector_px(Object*, int, double**);
@@ -117,9 +117,6 @@ extern ListVec* AllocListVec(Object* p);
 extern ListVec* AllocILV(Object*, int, double *);
 void FillListVec(ListVec* p,double dval);
 void ListVecResize(ListVec* p,int newsz);
-extern short *nrn_artcell_qindex_;
-extern double nrn_event_queue_stats(double*);
-extern void clear_event_queue();
 int IsList(Object*);
 
 static double sc[6];
@@ -136,8 +133,3 @@ extern double ismono1 (double *x, int n, int flag);
 double kcorfast(double* input1, double* input2, double* i1d , double* i2d,int n,double* ps);
 double Rktau (double* x, double* y, int n); // R version
 double kcorfast (double* input1, double* input2, double* i1d , double* i2d,int n,double* ps);
-
-
-
-
-
