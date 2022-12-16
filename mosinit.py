@@ -23,10 +23,10 @@ from network import *
 nq = anet.randruns(10000) # run the simulation with 10,000 random initializations
 
 # print the apoptosis ratio, given the four inputs.
-for i in xrange(2):
-  for j in xrange(2):
+for i in range(2):
+  for j in range(2):
     nq.verbose=0
     na = nq.select("TNF",i,"GF",j,"apop",1)
     ns = nq.select("TNF",i,"GF",j,"apop",0)
-    print "TNF:",i,"GF:",j,"apop ratio:",na/(na+ns)
+    print("TNF:",i,"GF:",j,"apop ratio:",na/(na+ns))
     nq.verbose=1
