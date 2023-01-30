@@ -18,12 +18,12 @@ try:
     from pylab import plot, arange, figure
     my_pylab_loaded = True
 except ImportError:
-    print "Pylab not imported"
+    print("Pylab not imported")
     my_pylab_loaded = False
 
 def htype (obj): st=obj.hname(); sv=st.split('['); return sv[0]
-def secname (obj): obj.push(); print h.secname() ; h.pop_section()
-def psection (obj): obj.push(); print h.psection() ; h.pop_section()
+def secname (obj): obj.push(); print(h.secname()) ; h.pop_section()
+def psection (obj): obj.push(); print(h.psection()) ; h.pop_section()
 
 allsecs=None #global list containing all NEURON sections, initialized via mkallsecs
 
@@ -52,7 +52,7 @@ def forall (c):
         function above.
     """
     global allsecs
-    if (type(allsecs)==types.NoneType): mkallsecs()
+    if (type(allsecs)==type(None)): mkallsecs()
     for s in allsecs: exec(c)
 
 #forsec syntax - executes command for each section who's name
@@ -63,7 +63,7 @@ def forsec (secref="soma",command=""):
         this function also utilizes the allsecs global variable.
     """
     global allsecs
-    if (type(allsecs)==types.NoneType): mkallsecs()
+    if (type(allsecs)==type(None)): mkallsecs()
     if (type(secref)==types.StringTypes[0]):
         for s in allsecs:
             if s.name().count(secref) > 0:

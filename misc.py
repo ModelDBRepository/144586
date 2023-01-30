@@ -3,7 +3,7 @@ import sys
 
 # p.ppr(5)
 def pr(x):
- print x
+ print(x)
 
 # p.hp(p.numpy)
 def hp(x):
@@ -11,7 +11,7 @@ def hp(x):
 
 # p.dr(p.numpy)
 def dr(x):
- print dir(x)
+ print(dir(x))
 
 
 

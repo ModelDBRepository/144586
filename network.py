@@ -34,7 +34,7 @@ class apopnet(bnet):
     def myanim (self,niters,fgif):
         self.start()
         os.system("rm frames/frame*.gif") # get rid of old gif frames
-        for i in xrange(niters):
+        for i in range(niters):
             fn = "frames/frame." + ("%03d" % i) + ".gif"
             self.bn.graphviz("__junk__.dot",fn,"gif",1,15,10,20) # must have Graphviz installed
             self.bn.advancebn()
@@ -43,7 +43,7 @@ class apopnet(bnet):
     # reachedapop - return True when the network has been run to an apoptotic state
     def reachedapop (self):
         idx = self.idnames["Apoptosis"]
-        for i in xrange(len(self.lstate)):
+        for i in range(len(self.lstate)):
             if self.lstate[i][idx] == 1: return True
         return False
 
@@ -60,12 +60,12 @@ class apopnet(bnet):
         nq.odec("vfinal")
         nq.clear(niters*4) # reserve space
         self.setrand(rseed)
-        for i in xrange(niters):
-            if i % 100 == 0: print "init %d of %d" % (i, niters)
+        for i in range(niters):
+            if i % 100 == 0: print("init %d of %d" % (i, niters))
             self.randvstart() # randomize starting state
-            for TNFState in xrange(2):
+            for TNFState in range(2):
                 self.vstart.x[self.idnames["TNF"]] = TNFState # sets TNF state
-                for GFState in xrange(2):
+                for GFState in range(2):
                     self.vstart.x[self.idnames["GF"]] = GFState # sets GF state
                     self.startrun(nsteps) # start the network up and run it
                     nq.append(i,TNFState,GFState,self.vstart,self.lstate[-1],self.reachedapop())

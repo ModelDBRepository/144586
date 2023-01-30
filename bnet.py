@@ -6,7 +6,7 @@ try:
     import networkx as nx
     havenetworkx = True
 except:
-    print "Could not import networkx!"
+    print("Could not import networkx!")
     havenetworkx = False
 
 # read names from file, one per line and return nqs
@@ -82,12 +82,12 @@ def readrules (fname,nqn):
 def makenet (nqn,nqr,vstart):
     bnet = h.BNET(int(nqn.v[0].size())) # make a boolean network with specified nodes
     nqn.tog("DB")
-    for i in xrange(int(nqn.v[0].size())): # store the names in the BNET
+    for i in range(int(nqn.v[0].size())): # store the names in the BNET
         bnet.setnname(i,nqn.get("name",i).s)
     bnet.setsthresh(nqn.getcol("sthresh"))#set sthresh for all nodes (node is special iff sthresh > 0)
     # setup the connectivity
     nqr.tog("DB")
-    for i in xrange(int(nqr.v[0].size())):
+    for i in range(int(nqr.v[0].size())):
         vsrc = nqr.get("vsrc",i).o[0]
         targid = nqr.get("target",i).x[0]
         weight = nqr.get("weight",i).x[0]
@@ -127,7 +127,7 @@ class bnet:
         self.rdm.discunif(0,1) # off (0) or on (1)
         self.vstart.setrand(self.rdm)
         # make sure special node starting states not modified
-        for i in xrange(int(self.vspecial.size())):
+        for i in range(int(self.vspecial.size())):
             if self.vspecial.x[i]: self.vstart.x[i]=vtmp.x[i]            
 
     # setrand - setup the random number generator
@@ -140,17 +140,17 @@ class bnet:
     def setspecial (self):
         self.vspecial = h.Vector(self.bn.numnodes())
         self.nqn.tog("DB")
-        for i in xrange(int(self.vspecial.size())):
+        for i in range(int(self.vspecial.size())):
             if self.nqn.getcol("input").x[i] != 0 or self.nqn.getcol("sthresh").x[i] > 0:
                 self.vspecial.x[i] = 1
 
     # make a NX Graph object representation
     def makeNXG (self):
         self.nxg = nx.MultiDiGraph() # multiple parallel edges in a directed graph
-        for n in self.idnames.keys():
+        for n in list(self.idnames.keys()):
             if type(n) == str:
                 self.nxg.add_node(n)
-        for idx in xrange(int(self.nqr.v[0].size())):
+        for idx in range(int(self.nqr.v[0].size())):
             vsrc = self.nqr.get("vsrc",idx).o[0]
             tn = self.idnames[int(self.nqr.get("target",idx).x[0])]
             w = self.nqr.get("weight",idx).x[0]
@@ -162,7 +162,7 @@ class bnet:
     def makeNameDict (self):
         self.idnames = {}
         self.nqn.tog("DB")
-        for i in xrange(int(self.nqn.v[0].size())):
+        for i in range(int(self.nqn.v[0].size())):
             self.idnames[int(self.nqn.getcol("id").x[i])] = self.nqn.get("name",i).s
             self.idnames[self.nqn.get("name",i).s] = int(self.nqn.getcol("id").x[i])
 
@@ -194,13 +194,13 @@ class bnet:
         nqr = self.nqr
         nqr.tog("DB")
         if type(src) == int:
-            for idx in xrange(int(nqr.v[0].size())):
+            for idx in range(int(nqr.v[0].size())):
                 vsrc = nqr.get("vsrc",idx).o[0]
                 targid = int(nqr.get("target",idx).x[0])
                 for sdx in vsrc:
                     if int(sdx) == src: targ.append(targid) # same source? save target
         elif type(src) == str:
-            for idx in xrange(int(nqr.v[0].size())):
+            for idx in range(int(nqr.v[0].size())):
                 vsrc = nqr.get("vsrc",idx).o[0]
                 targid = int(nqr.get("target",idx).x[0])
                 for sdx in vsrc:
@@ -232,7 +232,7 @@ class bnet:
         vstate=h.Vector() # NB: vstate not class instance here
         self.bn.getstate(vstate)
         self.lstate.append(vstate) # initial state
-        for i in xrange(niters):
+        for i in range(niters):
             self.bn.advancebn() # iterate
             vstate=h.Vector()
             self.bn.getstate(vstate)            
