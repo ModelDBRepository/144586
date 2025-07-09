@@ -58,8 +58,5 @@ For questions/comments email: samuel dot neymotin at yale dot edu or samn at neu
 
 20160920 This updated version from the Lytton lab allows this model to run on the mac.  
 20220523 Updated MOD files to contain valid C++ and be compatible with the upcoming versions 8.2 and 9.0 of NEURON. Updated to use post ~2011 signature of mcell_ran4_init function.  
-20221216 Python3 migration via 2to3.
-
----
-
-2025-07-09: Converted README to Markdown.
+20221216 Python3 migration via 2to3.  
+20250709 Converted README to Markdown.
